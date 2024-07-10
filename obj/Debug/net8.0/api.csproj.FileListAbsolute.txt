@@ -138,3 +138,6 @@ C:\Users\KAAN\Desktop\Simbrella\C#\api_library\api\obj\Debug\net8.0\api.pdb
 C:\Users\KAAN\Desktop\Simbrella\C#\api_library\api\obj\Debug\net8.0\api.genruntimeconfig.cache
 C:\Users\KAAN\Desktop\Simbrella\C#\api_library\api\obj\Debug\net8.0\ref\api.dll
 C:\Users\KAAN\Desktop\Simbrella\C#\api_library\api\obj\Debug\net8.0\api.sourcelink.json
+C:\Users\KAAN\Desktop\Simbrella\C#\api_library\api\bin\Debug\net8.0\Prometheus.NetStandard.dll
+C:\Users\KAAN\Desktop\Simbrella\C#\api_library\api\bin\Debug\net8.0\Prometheus.AspNetCore.dll
+C:\Users\KAAN\Desktop\Simbrella\C#\api_library\api\bin\Debug\net8.0\Prometheus.AspNetCore.HealthChecks.dll

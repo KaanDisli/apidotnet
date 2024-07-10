@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using api.Models.Repositories;
 using Microsoft.EntityFrameworkCore;
-
+using Prometheus;
 //Bugs I had to overcome: Deleting the migrations folder and redo'ing the process. Using "Users" instead of Users
 
 //dotnet new webapi -o api   to create a new api
@@ -28,8 +28,9 @@ var app = builder.Build();
 
 
 app.UseHttpsRedirection();
+app.UseMetricServer();
 
 app.MapControllers();
-
+app.MapMetrics();
 app.Run();
 
