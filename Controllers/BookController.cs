@@ -99,10 +99,26 @@ namespace api.Controllers
             
         }
         [HttpPut("update/{bookID}/{userID}")]
-        [FilterBookID]
-        public string modifyBook(int bookID, int userID,[FromBody] BookUpdate val){
+        
+        public async Task<IActionResult> modifyBook(int bookID, int userID,[FromBody] Dictionary<string, object> val){
+            
             _logger.LogInformation($"Recieved request at update/{bookID}/{userID}");
-            return "ok";
+            try{
+                if (await _userRepository.UserExists(userID) ){
+                    Console.WriteLine("TEST 30");
+                    await _bookRepositoryCache.ModifyBookCache(val ,bookID);
+                     _logger.LogInformation($"Book modified in cache");
+                     return Ok("Book succesfully updated");
+                }
+                else{
+                    return BadRequest("User doesn't exist");
+                }
+                    
+            }catch(Exception){
+                return BadRequest("Error updating book");
+            }
+            
+
         }
     }
 }

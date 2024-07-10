@@ -11,6 +11,7 @@ using api.Models;
 using api.Models.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace api.Models.Repositories
 {
@@ -84,8 +85,40 @@ namespace api.Models.Repositories
             }
             
         }
-        public  void ModifyBookCache(Book book){
+        public  async Task ModifyBookCache(Dictionary<string, object> Updatebook,int bookID){
             
+            if (await bookExistsCache(bookID)){
+                var book = await getBookByIdCache(bookID);
+                if (book == null){
+                    throw new Exception($"Book with id:  {bookID} not found");
+                }
+                books.Remove(book);
+                foreach(var update in Updatebook){
+                    switch(update.Key){
+                        case "title":
+                            book.title = update.Value.ToString();
+                            break;
+                        case"author":
+                            book.author = update.Value.ToString();
+                            break;
+                        case "price":
+                            book.price = update.Value.ToString();
+                            break;
+                        case "category":
+                            book.category = update.Value.ToString();
+                            break;
+                        case"serialNumber":
+                            book.serialNumber = update.Value.ToString();
+                            break;
+                    }
+                }
+                books.Add(book);
+                await _repository.ModifyBook(book);
+                
+
+            }else{
+                throw new Exception($"Book with id:  {bookID} not found");
+            }
         }
 
         public async Task DeleteBookCache(int id){
