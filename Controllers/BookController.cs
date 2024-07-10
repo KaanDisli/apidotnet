@@ -100,7 +100,7 @@ namespace api.Controllers
         }
         [HttpPut("update/{bookID}/{userID}")]
         [FilterBookID]
-        public string modifyBook(int bookID, int userID,[FromBody] Book val){
+        public string modifyBook(int bookID, int userID,[FromBody] BookUpdate val){
             _logger.LogInformation($"Recieved request at update/{bookID}/{userID}");
             return "ok";
         }
