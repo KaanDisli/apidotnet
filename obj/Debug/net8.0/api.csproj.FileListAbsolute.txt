@@ -137,3 +137,4 @@ C:\Users\KAAN\Desktop\Simbrella\C#\api_library\api\obj\Debug\net8.0\refint\api.d
 C:\Users\KAAN\Desktop\Simbrella\C#\api_library\api\obj\Debug\net8.0\api.pdb
 C:\Users\KAAN\Desktop\Simbrella\C#\api_library\api\obj\Debug\net8.0\api.genruntimeconfig.cache
 C:\Users\KAAN\Desktop\Simbrella\C#\api_library\api\obj\Debug\net8.0\ref\api.dll
+C:\Users\KAAN\Desktop\Simbrella\C#\api_library\api\obj\Debug\net8.0\api.sourcelink.json

@@ -43,6 +43,12 @@ namespace api.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Books_serialNumber",
+                table: "Books",
+                column: "serialNumber",
+                unique: true);
         }
 
         /// <inheritdoc />

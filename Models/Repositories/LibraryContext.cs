@@ -25,5 +25,9 @@ namespace api.Models.Repositories
             optionsBuilder.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
             
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Book>().HasIndex(b=>b.serialNumber).IsUnique();
+        }
     }
 }

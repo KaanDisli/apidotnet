@@ -11,7 +11,7 @@ using api.Models.Repositories;
 namespace api.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20240709075807_InitialCreate")]
+    [Migration("20240710064635_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -53,6 +53,9 @@ namespace api.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("id");
+
+                    b.HasIndex("serialNumber")
+                        .IsUnique();
 
                     b.ToTable("Books");
                 });

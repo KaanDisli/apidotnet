@@ -51,6 +51,9 @@ namespace api.Migrations
 
                     b.HasKey("id");
 
+                    b.HasIndex("serialNumber")
+                        .IsUnique();
+
                     b.ToTable("Books");
                 });
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Models.Repositories
 {
@@ -26,9 +27,10 @@ namespace api.Models.Repositories
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
-        public bool UserExists(int id){
+        public async Task<bool> UserExists(int id){
             _logger.LogInformation($"Making a db request to check if User exists");
-            return _context.Users.Any(u => u.id == id);
+            var boolean = await _context.Users.AnyAsync(u => u.id == id);
+            return boolean;
         }
     }
 }

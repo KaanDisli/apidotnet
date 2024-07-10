@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using api.Models;
 using api.Models.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Models.Repositories
 {
@@ -19,7 +20,7 @@ namespace api.Models.Repositories
         private readonly IMemoryCache _cache;
         private readonly LibraryContext _context;
         private readonly string cacheKey = "Library_data";
-        private  List<Book> books;
+        private  List<Book> books = new List<Book>();
         private readonly ILogger<BookRepository> _logger;
         private BookRepository _repository; 
         public BookRepositoryCache(IMemoryCache cache,BookRepository repository, LibraryContext context,ILogger<BookRepository> logger){
@@ -27,24 +28,11 @@ namespace api.Models.Repositories
             _repository = repository;
             _context = context;
             _logger = logger;
-            Index();
+            
         }
-        public async Task Index(){
-        if (_cache == null)
-        {
-            throw new NullReferenceException("_cache is not initialized.");
-        }
-        if (_repository == null)
-        {
-            throw new NullReferenceException("_repository is not initialized.");
-        }
-            if (!_cache.TryGetValue(cacheKey, out IEnumerable<Book> booklist)){
+        public async Task updateCache(){
                 _logger.LogInformation($"Making a db request to fill cache ");
-                updateCache();
-            }
-        }
-        public void updateCache(){
-                var booklist = _context.Books.ToList();
+                var booklist = await _context.Books.ToListAsync();
                 var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(15));
                 _cache.Set(cacheKey,booklist,cacheEntryOptions);    
                 books = _cache.Get<List<Book>>(cacheKey) ?? new List<Book>();              
@@ -54,10 +42,13 @@ namespace api.Models.Repositories
             Console.WriteLine("TEST 4 ");
             await _repository.addBook(book);
         }
-        public async Task<Book> getBookByIdCache(int id){
+        public async Task<Book?> getBookByIdCache(int id){
             _logger.LogInformation($"Getting book from cache");
             if (books == null){
-                updateCache();
+                await updateCache();
+                if (books == null){
+                    throw new Exception($"Book with id  {id} not found");
+                }
             }
             var book =  books.Find((b)=>b.id == id);
             if (book != null){
@@ -65,7 +56,7 @@ namespace api.Models.Repositories
                 return book;
             }else{
                 _logger.LogInformation($"Book with id {id} not found in cache. Calling updateCache()...");
-                updateCache();
+                await updateCache();
                 var book_ =  books.Find((b)=>b.id == id);
                 if (book_ == null ){
                     throw new Exception($"Book with id  {id} not found");
@@ -74,17 +65,17 @@ namespace api.Models.Repositories
             }
         }
         public  async Task<IEnumerable<Book?>> getBookByCategoryCache(string category){
-            updateCache();
+            await updateCache();
             _logger.LogInformation($"Getting books with category: {category} from cache");
             return books.Where((b)=>b.category == category);
         }
-        public async Task<Book> getBookBySerialNumberCache(string serialNumber){
+        public  async Task<Book> getBookBySerialNumberCache(string serialNumber){
             _logger.LogInformation($"Getting books by serialNumber");
             var book =  books.Find((b)=>b.serialNumber == serialNumber);
             if (book != null){
                 return book;
             }else{
-                updateCache();
+                await updateCache();
                 var book_ =  books.Find((b)=>b.serialNumber == serialNumber);
                 if (book_ == null ){
                     throw new Exception($"Book with serialNumber  {serialNumber} not found");
@@ -99,7 +90,7 @@ namespace api.Models.Repositories
 
         public async Task DeleteBookCache(int id){
             _logger.LogInformation($"Deleting book with id {id}from cache");
-            Book book = await getBookByIdCache(id);
+            var book = await getBookByIdCache(id);
             if (book != null){
                 books.Remove(book);
                 _cache.Set(cacheKey, books);
@@ -111,12 +102,28 @@ namespace api.Models.Repositories
                 throw; 
             }   
         }
-        public  bool bookExistsCache(int? id){
+        public async Task<bool> bookExistsCache(int? id){
             _logger.LogInformation($"Checking if book with id : {id} exists in cache");
-            if( books == null){
-                updateCache();
+            if(books == null){
+                Console.WriteLine("TEST 21");
+                await updateCache();
+                if (books == null){
+                    Console.WriteLine("TEST 22");
+                    return false;
+                }
             }
-           return books.Any((b)=>b.id == id);
+            Console.WriteLine("TEST 20");
+            if (books.Any((b)=>b.id == id)){
+                 return true;
+            }
+            else{
+                await updateCache();
+                return books.Any((b)=>b.id == id);
+            }
+            
+
+           
+           
         }
 
     }

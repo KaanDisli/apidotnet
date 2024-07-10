@@ -29,7 +29,7 @@ namespace api.Controllers
             try{
                 var book = await _bookRepositoryCache.getBookByIdCache(bookID);
                 return Ok(book);
-            }catch(Exception ex){
+            }catch(Exception){
                 return BadRequest("Book not found");
             }
             
@@ -49,12 +49,17 @@ namespace api.Controllers
         [HttpGet("get/serialNumber/{serialNumber}")]
         
         public async Task<IActionResult> getserialNumber(string serialNumber){
-            _logger.LogInformation($"Recieved request at get/serialNumber/{serialNumber}");
-            var book = await _bookRepositoryCache.getBookBySerialNumberCache(serialNumber);
-            if (book != null){
-                return Ok(book);
+            try{
+                _logger.LogInformation($"Recieved request at get/serialNumber/{serialNumber}");
+                var book = await _bookRepositoryCache.getBookBySerialNumberCache(serialNumber);
+                if (book != null){
+                    return Ok(book);
+                }
+                else{
+                    return BadRequest("Book with this serialNumber not found");
+                }
             }
-            else{
+            catch(Exception){
                 return BadRequest("Book with this serialNumber not found");
             }
         }
@@ -63,21 +68,26 @@ namespace api.Controllers
         [ValidateBookAdd]
         public async Task<ActionResult> addBook(int userID, [FromBody] Book book){
             _logger.LogInformation($"Recieved request at add/{userID}");
-            if (_userRepository.UserExists(userID)){
-                await _bookRepositoryCache.addBookCache(book);
-                return Ok("Book added");
+            try{
+                if (await _userRepository.UserExists(userID)){
+
+                    await _bookRepositoryCache.addBookCache(book);
+                    return Ok("Book added");
+                }
+                else{
+                    return BadRequest("User does not exist");
+                }
             }
-            else{
-                return BadRequest("User does not exist");
+            catch(Exception){
+                return BadRequest("Error while adding book");
             }
-            
         }
         [HttpDelete ("delete/{bookID}/{userID}")]
         
         public async Task<ActionResult> deleteBook(int bookID, int userID){
             _logger.LogInformation($"Recieved request at delete/{bookID}/{userID}");
-            if (_userRepository.UserExists(userID)){
-                if (!_bookRepositoryCache.bookExistsCache(bookID)){
+            if (await _userRepository.UserExists(userID)){
+                if (!await _bookRepositoryCache.bookExistsCache(bookID)){
                     return BadRequest("Book does not exist");
                 }
                 await _bookRepositoryCache.DeleteBookCache(bookID);
@@ -90,7 +100,7 @@ namespace api.Controllers
         }
         [HttpPut("update/{bookID}/{userID}")]
         [FilterBookID]
-        public string modifyBook(int bookID, int userID){
+        public string modifyBook(int bookID, int userID,[FromBody] Book val){
             _logger.LogInformation($"Recieved request at update/{bookID}/{userID}");
             return "ok";
         }

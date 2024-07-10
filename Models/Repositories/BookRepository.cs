@@ -44,7 +44,7 @@ namespace api.Models.Repositories
                 await _context.SaveChangesAsync();
             }
             catch(Exception ex){
-                Console.WriteLine("error handling book");
+                
                  _logger.LogError(ex, $"Error occurred while fetching the book");
                 throw;
             }
