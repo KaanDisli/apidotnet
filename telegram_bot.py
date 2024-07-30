@@ -11,7 +11,7 @@ Username = "@Library_BBBBot"
 
 
 url = "http://127.0.0.1:5011"
-token = "7422340883:AAE1VRKkKT4_djXtW6CpRGFDj8MKUaXI-rQ"
+token = "****"
 bot = telebot.TeleBot(token)
 def extract_arg(arg):
     return arg.split()[1:]
